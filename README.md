@@ -49,5 +49,5 @@ This is the vision problem of 6d pose estimation using the 2D images.
 		STEP4: Do 3D-2D correspondence using solvePnP:
 			for this provide information from camera_calib.py and the 3D coordinates in the world of the corner along with the coordinates in 2D image.
 			This will return the Rotaiton_Vector and Translation_Vector that will transform the 3D world coordinate system to the 3d camera coordinate system.
-		STESP: These information can be used for the 6D pose estimation.
+		STEP5: These information can be used for the 6D pose estimation.
 
