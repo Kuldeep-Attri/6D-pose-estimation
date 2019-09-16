@@ -9,8 +9,6 @@ from camera_calib import camera_calibration
 
 
 
-
-
 def get_args():
 	parser = argparse.ArgumentParser()
 
@@ -19,6 +17,7 @@ def get_args():
 	parser.add_argument("--do_calibration", dest="do_calibration", action="store_true")
 	parser.add_argument("--done_calibration", dest="done_calibration", action="store_true")
 	parser.add_argument("--create_markers", dest="create_markers", action="store_true")
+	parser.add_argument("--run_camera", dest="run_camera", action="store_true")
 	
 	args = parser.parse_args()
 	return args
@@ -79,6 +78,39 @@ def get_world_coords_of_corners(file_path):
 			real_world_points.append(ids_to_coords)	
 
 	return num_ids, real_world_points
+
+
+def track_markers_from_webcam(camera_matrix, dist_coef, aruco_dict):
+
+	cap = cv2.VideoCapture(0)
+
+	while(True):
+		ret, frame = cap.read()
+		if not ret:
+			break
+
+
+		parameters = aruco.DetectorParameters_create()
+		parameters.cornerRefinementMethod = aruco.CORNER_REFINE_SUBPIX
+
+		corners, ids, rejectedPoints = aruco.detectMarkers(frame, aruco_dict, parameters=parameters)
+		rvec, tvec ,_ = aruco.estimatePoseSingleMarkers(corners, 0.1776, camera_matrix, dist_coef)
+
+		if ids is None:
+			continue
+		
+		else:
+			print(ids.size)
+			for i in range(ids.size):
+
+				aruco.drawAxis(frame, camera_matrix, dist_coef, rvec[i], tvec[i], 0.1)
+
+
+			cv2.imshow('webcam', frame)
+			if cv2.waitKey(50) & 0xFF == ord('q'):
+				break
+	cap.release()
+	cv2.destroyAllWindows()
 
 
 
@@ -214,6 +246,9 @@ if __name__ == '__main__':
 	print("Trans_Vector in world coordinates is -- ", T_position)
 
 	
+
+	if args.run_camera:
+		track_markers_from_webcam(camera_matrix, dist_coef, aruco_dict)
 
 	print('Done!!!')
 
