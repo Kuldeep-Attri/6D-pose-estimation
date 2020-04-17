@@ -253,6 +253,15 @@ if __name__ == '__main__':
 	print('Done!!!')
 
 
+def get_XYZ(u, v, R_mat, T_vec):
+	
+	X = Y = Z = -1
+	
+	X, Y, Z = T_vec + R_mat*np.array([u, v, 1])
+	
+	return X, Y, Z
+
+
 
 
 
