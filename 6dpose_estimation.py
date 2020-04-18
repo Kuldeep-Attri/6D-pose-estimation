@@ -259,7 +259,7 @@ if __name__ == '__main__':
 
 def get_XYZ(u, v, cam_mtx, dist, R_mat, T_vec):
 	
-	# cam_mtx and dist you can load from the  camera_coeff.txt file
+	# cam_mtx and dist you can load from the  camera_coeff.txt and dist_coeff.txt
 	# R_mat and T_vec you get from above function
 	
 	X = Y = Z = -1
@@ -272,6 +272,10 @@ def get_XYZ(u, v, cam_mtx, dist, R_mat, T_vec):
 	newcam_mtx, roi = cv2.getOptimalNewCameraMatrix(cam_mtx, dist, (1280, 720), 1, (1280, 720))
 	inverse_cam_mtx = np.linalg.inv(newcam_mtx)
 	
+	# Or just use this..
+	# newcam_mtx = cam_mtx # Laod frrom camera_coeff.txt
+	
+	# Please use above one this one might be wrong....
 	# Or Just add cam_mtx and dist column wise
 	# newcam_mtx = np.column_stack((cam_mtx, dist))
 	
