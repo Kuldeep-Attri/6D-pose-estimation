@@ -249,17 +249,40 @@ if __name__ == '__main__':
 
 	if args.run_camera:
 		track_markers_from_webcam(camera_matrix, dist_coef, aruco_dict)
+		
 
 	print('Done!!!')
 
+	return rotation_matrix, translational_vec
 
-def get_XYZ(u, v, R_mat, T_vec):
+
+
+def get_XYZ(u, v, cam_mtx, dist, R_mat, T_vec):
+	
+	# cam_mtx and dist you can load from the  camera_coeff.txt file
+	# R_mat and T_vec you get from above function
 	
 	X = Y = Z = -1
+	pixel_arr = np.array([[u,v,1]], dtype=np.float32).T
+	s = 1 # Need to play with it
 	
-	X, Y, Z = T_vec + R_mat*np.array([u, v, 1])
+	pixel_arr = s * pixel_arr
 	
-	return X, Y, Z
+	# Try this as the guys talks in tutorail says we should use this
+	newcam_mtx, roi = cv2.getOptimalNewCameraMatrix(cam_mtx, dist, (1280, 720), 1, (1280, 720))
+	inverse_cam_mtx = np.linalg.inv(newcam_mtx)
+	
+	# Or Just add cam_mtx and dist column wise
+	# newcam_mtx = np.column_stack((cam_mtx, dist))
+	
+	inverse_R_mat = np.linalg.inv(R_mat)
+	
+	
+	xyz = inverse_cam_mtx.dot(pixel_arr)
+	xyz = xyz - T_vec
+	xyz = inverse_cam_mtx.dot(xyz)
+	
+	return xyz
 
 
 
